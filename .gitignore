@@ -1,0 +1,6 @@
+.venv
+csv/
+.env
+__pycache__/
+sample.py
+.DS_Store
