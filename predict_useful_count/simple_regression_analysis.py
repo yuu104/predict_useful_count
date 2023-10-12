@@ -46,7 +46,7 @@ def main():
     plt.title("【説明文とのマッチ数】x【役立ち数】")
     plt.xlabel("説明文とのマッチ数")
     plt.ylabel("役立ち数")
-    # plt.plot(X_train, , color="red", linewidth=2)
+    plt.plot(X_train, model.predict(X_train), color="red", linewidth=2)
     plt.show()
 
 
