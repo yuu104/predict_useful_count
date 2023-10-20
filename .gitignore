@@ -4,3 +4,5 @@ csv/
 __pycache__/
 sample.py
 .DS_Store
+models/
+model_outputs/
