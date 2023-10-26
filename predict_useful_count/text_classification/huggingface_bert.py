@@ -60,7 +60,7 @@ def main():
     dataset_encoded = dataset.map(tokenize, batched=True, batch_size=None)
 
     # 学習の準備
-    batch_size = 16
+    batch_size = 8
     logging_steps = len(dataset_encoded["train"])  # batch_size
     model_name = f"{current_path}/../model_outputs/chocolate"
     training_args = TrainingArguments(
