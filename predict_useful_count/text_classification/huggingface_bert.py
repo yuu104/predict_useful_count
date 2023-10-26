@@ -49,8 +49,13 @@ def main():
     # 事前学習済みモデルの取得
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     num_labels = 6
+    id2label = {0: "0", 1: "1~2", 2: "3~4", 3: "5~6", 4: "7~9", 5: "10~"}
+    label2id = {"0": 0, "1~2": 1, "3~4": 2, "5~6": 3, "7~9": 4, "10~": 5}
     model = AutoModelForSequenceClassification.from_pretrained(
-        "cl-tohoku/bert-base-japanese-whole-word-masking", num_labels=num_labels
+        "cl-tohoku/bert-base-japanese-whole-word-masking",
+        num_labels=num_labels,
+        id2label=id2label,
+        label2id=label2id,
     ).to(device)
 
     # トークナイザ処理
