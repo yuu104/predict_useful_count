@@ -25,6 +25,7 @@ def compute_metrics(pred):
 
 def main():
     category_name = "chocolate"
+    pre_train_model_name = "cl-tohoku/bert-base-japanese-whole-word-masking"
 
     # 　データセットの用意
     review_df = pd.read_csv(
@@ -42,9 +43,7 @@ def main():
     dataset = DatasetDict({"train": train_dataset, "test": test_dataset})
 
     # トークナイザの取得
-    tokenizer = AutoTokenizer.from_pretrained(
-        "cl-tohoku/bert-base-japanese-whole-word-masking"
-    )
+    tokenizer = AutoTokenizer.from_pretrained(pre_train_model_name)
 
     # 事前学習済みモデルの取得
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -52,7 +51,7 @@ def main():
     id2label = {0: "0", 1: "1~2", 2: "3~4", 3: "5~6", 4: "7~9", 5: "10~"}
     label2id = {"0": 0, "1~2": 1, "3~4": 2, "5~6": 3, "7~9": 4, "10~": 5}
     model = AutoModelForSequenceClassification.from_pretrained(
-        "cl-tohoku/bert-base-japanese-whole-word-masking",
+        pre_train_model_name,
         num_labels=num_labels,
         id2label=id2label,
         label2id=label2id,
