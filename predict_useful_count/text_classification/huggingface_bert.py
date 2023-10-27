@@ -51,7 +51,7 @@ def plot_confusion_matrix(y_pred: list, y_true: list, labels: List[str]):
     混同行列をプロットする
     """
 
-    cm = confusion_matrix(y_true, y_pred, normalize="true", labels=labels)
+    cm = confusion_matrix(y_true, y_pred, labels=labels)
     fig, ax = plt.subplots(figsize=(6, 6))
     disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=labels)
     disp.plot(cmap="Blues", values_format=".2f", ax=ax, colorbar=False)
@@ -65,7 +65,9 @@ def get_valuation_index(y_pred: list, y_true: list, labels: List[str]) -> DataFr
     """
 
     report = classification_report(
-        y_true, y_pred, target_names=labels, output_dict=True
+        y_true,
+        y_pred,
+        output_dict=True,
     )
     report_df = pd.DataFrame(report).T
     return report_df
