@@ -21,9 +21,22 @@ from transformers import (
     pipeline,
 )
 from datasets import Dataset, DatasetDict
+from imblearn.under_sampling import RandomUnderSampler
 
 
 current_path = os.path.dirname(os.path.abspath(__file__))
+
+
+def under_sampling(train_df: DataFrame) -> DataFrame:
+    """
+    不均衡なデータを整理する
+    """
+    y = train_df["label"]
+
+    strategy = {0: 2000, 1: 1200, 2: 1168, 3: 468, 4: 313, 5: 516}
+    rus = RandomUnderSampler(random_state=0, sampling_strategy=strategy)
+    resampled_train_df, _ = rus.fit_resample(X=train_df, y=y)
+    return resampled_train_df
 
 
 def compute_metrics(pred):
@@ -63,7 +76,6 @@ def get_valuation_index(y_pred: list, y_true: list, labels: List[str]) -> DataFr
     """
     評価指標を取得する
     """
-
     report = classification_report(
         y_true,
         y_pred,
@@ -127,6 +139,7 @@ def training():
     train_df = train_df.drop(
         train_df.columns[train_df.columns.str.contains("unnamed:", case=False)], axis=1
     )
+    train_df = under_sampling(train_df=train_df)
     test_df = test_df.drop(
         test_df.columns[test_df.columns.str.contains("unnamed:", case=False)], axis=1
     )
