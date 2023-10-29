@@ -169,7 +169,9 @@ def training(category_name: str, pre_train_model_name: str):
 
     # トークナイザ処理
     def tokenize(batch):
-        return tokenizer(batch["text"], padding=True, truncation=True)
+        return tokenizer(
+            batch["text"], padding=True, truncation=True, return_tensors="pt"
+        )
 
     dataset_encoded = dataset.map(tokenize, batched=True, batch_size=None)
 
