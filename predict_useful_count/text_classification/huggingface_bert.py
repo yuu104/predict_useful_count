@@ -84,12 +84,11 @@ def get_classification_report(y_pred: list, y_true: list) -> DataFrame:
     return report_df
 
 
-def evaluation():
+def evaluation(category_name: str, pre_train_model_name: str):
     """
     モデルの評価を行い、結果を出力する
     """
 
-    category_name = "chocolate"
     review_df = pd.read_csv(
         f"{current_path}/../csv/text_classification/{category_name}/review.csv"
     )
@@ -118,15 +117,12 @@ def evaluation():
     plot_confusion_matrix(y_pred=y_pred, y_true=y_true, labels=labels)
 
 
-def training():
+def training(category_name: str, pre_train_model_name: str):
     """
     役立ち数の推論モデルを構築する
     - 事前学習済みモデルを使用してレビュー文をベクトル化・ファインチューニング
     - 学習したモデルを保存する
     """
-
-    category_name = "chocolate"
-    pre_train_model_name = "cl-tohoku/bert-base-japanese-whole-word-masking"
 
     # 　データセットの用意
     review_df = pd.read_csv(
@@ -200,8 +196,11 @@ def training():
 
 
 def main():
-    # training()
-    evaluation()
+    pre_train_model_name = "papluca/xlm-roberta-base-language-detection"
+    category_name = "chocolate"
+
+    training(category_name=category_name, pre_train_model_name=pre_train_model_name)
+    evaluation(category_name=category_name, pre_train_model_name=pre_train_model_name)
 
 
 if __name__ == "__main__":
