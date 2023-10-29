@@ -26,13 +26,13 @@ from imblearn.under_sampling import RandomUnderSampler
 current_path = os.path.dirname(os.path.abspath(__file__))
 
 
-def under_sampling(df: DataFrame) -> DataFrame:
+def under_sampling(df: DataFrame, strategy: dict) -> DataFrame:
     """
     不均衡なデータを整理する
     """
+
     y = df["label"]
 
-    strategy = {0: 2000, 1: 1200, 2: 1168, 3: 468, 4: 313, 5: 516}
     rus = RandomUnderSampler(random_state=0, sampling_strategy=strategy)
     resampled_train_df, _ = rus.fit_resample(X=df, y=y)
     return resampled_train_df
@@ -96,7 +96,10 @@ def evaluation(category_name: str, pre_train_model_name: str):
     test_df = test_df.drop(
         test_df.columns[test_df.columns.str.contains("unnamed:", case=False)], axis=1
     )
-    test_df = under_sampling(df=test_df)
+    test_df = under_sampling(
+        df=test_df,
+        strategy={"0": 100, "1~2": 100, "3~4": 100, "5~6": 100, "7~9": 78, "10~": 100},
+    )
 
     y_true = []
     y_pred = []
@@ -132,11 +135,16 @@ def training(category_name: str, pre_train_model_name: str):
     train_df = train_df.drop(
         train_df.columns[train_df.columns.str.contains("unnamed:", case=False)], axis=1
     )
-    train_df = under_sampling(df=train_df)
+    train_df = under_sampling(
+        df=train_df, strategy={0: 500, 1: 500, 2: 500, 3: 468, 4: 313, 5: 500}
+    )
     test_df = test_df.drop(
         test_df.columns[test_df.columns.str.contains("unnamed:", case=False)], axis=1
     )
-    test_df = under_sampling(df=test_df)
+    test_df = under_sampling(
+        df=test_df,
+        strategy={0: 100, 1: 100, 2: 100, 3: 100, 4: 78, 5: 100},
+    )
     train_dataset = Dataset.from_pandas(train_df)
     test_dataset = Dataset.from_pandas(test_df)
     dataset = DatasetDict({"train": train_dataset, "test": test_dataset})
