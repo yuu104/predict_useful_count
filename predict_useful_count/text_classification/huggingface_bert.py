@@ -165,6 +165,7 @@ def training(category_name: str, pre_train_model_name: str):
         num_labels=num_labels,
         id2label=id2label,
         label2id=label2id,
+        ignore_mismatched_sizes=True,
     ).to(device)
 
     # トークナイザ処理
