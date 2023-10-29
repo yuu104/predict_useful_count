@@ -72,7 +72,7 @@ def plot_confusion_matrix(y_pred: list, y_true: list, labels: List[str]):
     plt.show()
 
 
-def get_valuation_index(y_pred: list, y_true: list, labels: List[str]) -> DataFrame:
+def get_classification_report(y_pred: list, y_true: list) -> DataFrame:
     """
     評価指標を取得する
     """
@@ -116,8 +116,10 @@ def evaluation():
         y_true.append(str(label))
         y_pred.append(str(prediction[0]["label"]))
 
-    valuation_index = get_valuation_index(y_pred=y_pred, y_true=y_true, labels=labels)
-    print(valuation_index)
+    classification_report = get_classification_report(
+        y_pred=y_pred, y_true=y_true, labels=labels
+    )
+    print(classification_report)
     plot_confusion_matrix(y_pred=y_pred, y_true=y_true, labels=labels)
 
 

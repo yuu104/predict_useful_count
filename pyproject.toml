@@ -19,6 +19,7 @@ fugashi = "^1.3.0"
 ipadic = "^1.0.0"
 sentencepiece = "^0.1.99"
 accelerate = "^0.23.0"
+imblearn = "^0.0"
 
 
 [build-system]
