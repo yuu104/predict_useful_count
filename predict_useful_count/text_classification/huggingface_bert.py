@@ -27,15 +27,15 @@ from imblearn.under_sampling import RandomUnderSampler
 current_path = os.path.dirname(os.path.abspath(__file__))
 
 
-def under_sampling(train_df: DataFrame) -> DataFrame:
+def under_sampling(df: DataFrame) -> DataFrame:
     """
     不均衡なデータを整理する
     """
-    y = train_df["label"]
+    y = df["label"]
 
     strategy = {0: 2000, 1: 1200, 2: 1168, 3: 468, 4: 313, 5: 516}
     rus = RandomUnderSampler(random_state=0, sampling_strategy=strategy)
-    resampled_train_df, _ = rus.fit_resample(X=train_df, y=y)
+    resampled_train_df, _ = rus.fit_resample(X=df, y=y)
     return resampled_train_df
 
 
