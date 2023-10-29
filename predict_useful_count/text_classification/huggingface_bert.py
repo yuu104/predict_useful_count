@@ -105,7 +105,10 @@ def evaluation(category_name: str, pre_train_model_name: str):
     y_pred = []
     labels = ["0", "1~2", "3~4", "5~6", "7~9", "10~"]
 
-    classifier = pipeline("sentiment-analysis", model=f"{current_path}/models")
+    classifier = pipeline(
+        "sentiment-analysis",
+        model=f"{current_path}/models/{category_name}/{pre_train_model_name}/under_sampling",
+    )
     for item in zip(test_df["label"], test_df["text"]):
         label = item[0]
         text = item[1]
@@ -173,7 +176,7 @@ def training(category_name: str, pre_train_model_name: str):
     # 学習の準備
     batch_size = 8
     logging_steps = len(dataset_encoded["train"])  # batch_size
-    output_dir = f"{current_path}/model_outputs/{category_name}/{pre_train_model_name}"
+    output_dir = f"{current_path}/model_outputs/{category_name}/{pre_train_model_name}/under_sampling"
     training_args = TrainingArguments(
         output_dir=output_dir,
         num_train_epochs=2,
@@ -200,7 +203,9 @@ def training(category_name: str, pre_train_model_name: str):
     trainer.train()
 
     # モデルの保存
-    trainer.save_model(f"{current_path}/models/{category_name}/{pre_train_model_name}")
+    trainer.save_model(
+        f"{current_path}/models/{category_name}/{pre_train_model_name}/under_sampling"
+    )
 
 
 def main():
