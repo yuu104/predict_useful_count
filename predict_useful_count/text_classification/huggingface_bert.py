@@ -94,13 +94,11 @@ def evaluation():
     review_df = pd.read_csv(
         f"{current_path}/../csv/text_classification/{category_name}/review.csv"
     )
-    train_df, test_df = get_train_test_split(review_df=review_df)
-    train_df = train_df.drop(
-        train_df.columns[train_df.columns.str.contains("unnamed:", case=False)], axis=1
-    )
+    _, test_df = get_train_test_split(review_df=review_df)
     test_df = test_df.drop(
         test_df.columns[test_df.columns.str.contains("unnamed:", case=False)], axis=1
     )
+    test_df = under_sampling(df=test_df)
 
     y_true = []
     y_pred = []
@@ -116,9 +114,7 @@ def evaluation():
         y_true.append(str(label))
         y_pred.append(str(prediction[0]["label"]))
 
-    classification_report = get_classification_report(
-        y_pred=y_pred, y_true=y_true, labels=labels
-    )
+    classification_report = get_classification_report(y_pred=y_pred, y_true=y_true)
     print(classification_report)
     plot_confusion_matrix(y_pred=y_pred, y_true=y_true, labels=labels)
 
@@ -141,10 +137,11 @@ def training():
     train_df = train_df.drop(
         train_df.columns[train_df.columns.str.contains("unnamed:", case=False)], axis=1
     )
-    train_df = under_sampling(train_df=train_df)
+    train_df = under_sampling(df=train_df)
     test_df = test_df.drop(
         test_df.columns[test_df.columns.str.contains("unnamed:", case=False)], axis=1
     )
+    test_df = under_sampling(df=test_df)
     train_dataset = Dataset.from_pandas(train_df)
     test_dataset = Dataset.from_pandas(test_df)
     dataset = DatasetDict({"train": train_dataset, "test": test_dataset})
