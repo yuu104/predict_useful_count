@@ -20,6 +20,7 @@ ipadic = "^1.0.0"
 sentencepiece = "^0.1.99"
 accelerate = "^0.23.0"
 imblearn = "^0.0"
+unidic-lite = "^1.0.8"
 
 
 [build-system]

@@ -2348,6 +2348,17 @@ files = [
 ]
 
 [[package]]
+name = "unidic-lite"
+version = "1.0.8"
+description = "A small version of UniDic packaged for Python"
+category = "main"
+optional = false
+python-versions = "*"
+files = [
+    {file = "unidic-lite-1.0.8.tar.gz", hash = "sha256:db9d4572d9fdd4d00a97949d4b0741ec480ee05a7e7e2e32f547500dae27b245"},
+]
+
+[[package]]
 name = "urllib3"
 version = "2.0.7"
 description = "HTTP library with thread-safe connection pooling, file post, and more."
@@ -2590,4 +2601,4 @@ testing = ["big-O", "jaraco.functools", "jaraco.itertools", "more-itertools", "p
 [metadata]
 lock-version = "2.0"
 python-versions = ">=3.9.5,<3.13"
-content-hash = "d8c3dea23f022df7f32373940ce0d478c70114412eb24507c7ec1908a4a96f63"
+content-hash = "f10c19616f0663ff6d947cf7d19d3f306f3639a1ef93bfc05c19b8f0bd5a2381"
