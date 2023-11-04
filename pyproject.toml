@@ -4,10 +4,13 @@ version = "0.1.0"
 description = ""
 authors = ["yuu <yusei8171@gmail.com>"]
 readme = "README.md"
-packages = [{include = "predict_useful_count"}]
+packages = [
+  {include = "predict_useful_count"}, 
+  {include = "utils", from = "predict_useful_count"}
+]
 
 [tool.poetry.dependencies]
-python = ">=3.9.5,<3.13"
+python = "3.9.5"
 pandas = "^2.1.1"
 scikit-learn = "^1.3.1"
 matplotlib = "^3.8.0"
