@@ -52,6 +52,21 @@ def get_evaluation_expressions() -> List[str]:
 
 
 def conect_compound_words(tokens: List[Token]) -> List[Token]:
+    """
+    複合語を接続する関数
+    - 文節内で複合語となる形態素を結合する
+
+    Parameters
+    ----------
+    tokens: List[Token]
+        一文節の形態素列
+
+    Returns
+    -------
+    new_tokens: List[Token]
+        複合語を接続した一文節の形態素列
+    """
+
     new_tokens: List[Token] = []
 
     index = 0
@@ -135,7 +150,23 @@ def conect_compound_words(tokens: List[Token]) -> List[Token]:
     return new_tokens
 
 
-def is_used_token(token: Token):
+def is_used_token(token: Token) -> bool:
+    """
+    形態素列から必要な形態素のみをフィルタリングする
+
+    Parameters
+    ----------
+    token: Token
+        - 形態素情報
+        - この形態素がフィルタリング対象かどうかを判定する
+
+    Returns
+    -------
+    _: bool
+        - 引数の形態素がフィルタリング対象でなければ `true`
+        - フィルタリング対象であれば `false`
+    """
+
     evaluation_expressions = get_evaluation_expressions()
     if token["pos"] in ["名詞", "形容詞", "動詞", "副詞"]:
         return True
@@ -147,6 +178,20 @@ def is_used_token(token: Token):
 
 
 def get_token_list(sentence: str) -> Union[List[str], None]:
+    """
+    センテンスから形態素列を取得する
+
+    Parameters
+    ----------
+    sentence: str
+        レビュー文中の一文
+
+    Returns
+    -------
+    _: Union[List[str], None]
+        センテンスを形態素列に変換したもの
+    """
+
     if sentence == "":
         return None
 
