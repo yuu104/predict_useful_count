@@ -2,6 +2,7 @@ from typing import List, TypedDict, Union
 import os
 import CaboCha
 from dotenv import load_dotenv
+from pprint import pprint
 
 
 current_path = os.path.dirname(os.path.abspath(__file__))
@@ -136,7 +137,7 @@ def conect_compound_words(tokens: List[Token]) -> List[Token]:
 
 def is_used_token(token: Token):
     evaluation_expressions = get_evaluation_expressions()
-    if token["pos"] == ["名詞", "形容詞", "動詞", "副詞"]:
+    if token["pos"] in ["名詞", "形容詞", "動詞", "副詞"]:
         return True
     if (
         token["surface"] in evaluation_expressions
