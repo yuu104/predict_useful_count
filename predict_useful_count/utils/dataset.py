@@ -61,6 +61,7 @@ def under_sampling(df: DataFrame, strategy: dict) -> DataFrame:
     y = df["label"]
     rus = RandomUnderSampler(random_state=0, sampling_strategy=strategy)
     resampled_train_df, _ = rus.fit_resample(X=df, y=y)
+    resampled_train_df = resampled_train_df.reset_index(drop=True)
     return resampled_train_df
 
 
