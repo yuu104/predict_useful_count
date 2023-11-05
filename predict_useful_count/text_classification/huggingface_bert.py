@@ -112,11 +112,12 @@ def evaluation(category_name: str, pre_train_model_name: str):
     for item in zip(test_df["label"], test_df["text"]):
         label = item[0]
         text = item[1]
-
-        prediction = classifier(text)
-
-        y_true.append(str(label))
-        y_pred.append(str(prediction[0]["label"]))
+        try:
+            prediction = classifier(text)
+            y_true.append(str(label))
+            y_pred.append(str(prediction[0]["label"]))
+        except:
+            continue
 
     classification_report = get_classification_report(y_pred=y_pred, y_true=y_true)
     print(classification_report)
