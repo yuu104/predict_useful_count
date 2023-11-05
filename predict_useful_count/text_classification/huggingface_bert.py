@@ -4,7 +4,6 @@ import pandas as pd
 from pandas import DataFrame
 import torch
 import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import (
     accuracy_score,
     f1_score,
@@ -20,22 +19,9 @@ from transformers import (
     pipeline,
 )
 from datasets import Dataset, DatasetDict
-from imblearn.under_sampling import RandomUnderSampler
-
+from utils.dataset import under_sampling, get_train_test_split
 
 current_path = os.path.dirname(os.path.abspath(__file__))
-
-
-def under_sampling(df: DataFrame, strategy: dict) -> DataFrame:
-    """
-    不均衡なデータを整理する
-    """
-
-    y = df["label"]
-
-    rus = RandomUnderSampler(random_state=0, sampling_strategy=strategy)
-    resampled_train_df, _ = rus.fit_resample(X=df, y=y)
-    return resampled_train_df
 
 
 def compute_metrics(pred):
@@ -44,18 +30,6 @@ def compute_metrics(pred):
     f1 = f1_score(labels, preds, average="weighted")
     acc = accuracy_score(labels, preds)
     return {"accuracy": acc, "f1": f1}
-
-
-def get_train_test_split(review_df: DataFrame) -> Tuple[DataFrame, DataFrame]:
-    """
-    データを学習用・テスト用に分割する
-    """
-    train_df, test_df = train_test_split(review_df, test_size=0.2, random_state=42)
-    print("学習用データ")
-    print(train_df.groupby("label").size().reset_index(name="RecordCount"))
-    print("テスト用データ")
-    print(test_df.groupby("label").size().reset_index(name="RecordCount"))
-    return train_df, test_df
 
 
 def plot_confusion_matrix(y_pred: list, y_true: list, labels: List[str]):
@@ -93,9 +67,6 @@ def evaluation(category_name: str, pre_train_model_name: str):
         f"{current_path}/../csv/text_classification/{category_name}/review.csv"
     )
     _, test_df = get_train_test_split(review_df=review_df)
-    test_df = test_df.drop(
-        test_df.columns[test_df.columns.str.contains("unnamed:", case=False)], axis=1
-    )
     test_df = under_sampling(
         df=test_df,
         strategy={"0": 100, "1~2": 100, "3~4": 100, "5~6": 100, "7~9": 78, "10~": 100},
@@ -136,14 +107,8 @@ def training(category_name: str, pre_train_model_name: str):
         f"{current_path}/../csv/text_classification/{category_name}/encoded_review.csv"
     )
     train_df, test_df = get_train_test_split(review_df=review_df)
-    train_df = train_df.drop(
-        train_df.columns[train_df.columns.str.contains("unnamed:", case=False)], axis=1
-    )
     train_df = under_sampling(
         df=train_df, strategy={0: 500, 1: 500, 2: 500, 3: 468, 4: 313, 5: 500}
-    )
-    test_df = test_df.drop(
-        test_df.columns[test_df.columns.str.contains("unnamed:", case=False)], axis=1
     )
     test_df = under_sampling(
         df=test_df,
