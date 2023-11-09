@@ -66,7 +66,7 @@ def evaluation(category_name: str, pre_train_model_name: str):
     review_df = pd.read_csv(
         f"{current_path}/../csv/text_classification/{category_name}/review.csv"
     )
-    _, test_df = get_train_test_split(review_df=review_df)
+    _, test_df = get_train_test_split(df=review_df)
     test_df = under_sampling(
         df=test_df,
         strategy={"0": 100, "1~2": 100, "3~4": 100, "5~6": 100, "7~9": 78, "10~": 100},
