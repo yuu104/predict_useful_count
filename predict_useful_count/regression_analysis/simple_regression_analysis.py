@@ -20,7 +20,7 @@ def emotion_mlask():
     data_file = "iya_analysis.csv"
 
     df = pd.read_csv(
-        f"{current_path}/csv/{analysis_category}/{category_name}/{data_file}",
+        f"{current_path}/../csv/{analysis_category}/{category_name}/{data_file}",
         sep=",",
         index_col=0,
     )
@@ -66,7 +66,7 @@ def description_evaluation():
     data_file = "analysis.csv"
 
     df = pd.read_csv(
-        f"{current_path}/csv/{analysis_category}/{category_name}/{data_file}",
+        f"{current_path}/../csv/{analysis_category}/{category_name}/{data_file}",
         sep=",",
         index_col=0,
     )
