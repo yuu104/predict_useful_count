@@ -6,3 +6,4 @@ sample.py
 .DS_Store
 models/
 model_outputs/
+binaries/
