@@ -65,26 +65,34 @@ def under_sampling(df: DataFrame, strategy: dict) -> DataFrame:
     return resampled_train_df
 
 
-def create_train_test_csv(category_name: str) -> None:
+def create_train_test_csv(
+    review_data_path: str, train_strategy: dict, test_strategy: dict
+) -> None:
     """
     レビューデータを学習用とテスト用に分割し、csvに保存する
 
     Parameters
     ----------
-    category_name: str
-      対象カテゴリ
+    review_data_path: str
+      分割するレビューファイルのパス
+    train_strategy: dict
+      アンダーサンプリング後の各ラベルごとの学習用データ数
+    test_strategy: dict
+      アンダーサンプリング後の各ラベルごとのテスト用データ数
     """
 
-    review_df = pd.read_csv(
-        f"{current_path}/../csv/text_classification/{category_name}/encoded_review.csv"
-    )
+    review_df = pd.read_csv(review_data_path, index_col=0)
     train_df, test_df = get_train_test_split(df=review_df)
-    train_df = under_sampling(
-        df=train_df, strategy={0: 2400, 1: 2400, 2: 2400, 3: 2400, 4: 2400, 5: 2400}
-    )
+    train_df = under_sampling(df=train_df, strategy=train_strategy)
     test_df = under_sampling(
         df=test_df,
-        strategy={0: 250, 1: 250, 2: 250, 3: 250, 4: 250, 5: 250},
+        strategy=test_strategy,
     )
-    train_df.to_csv(f"{current_path}/../csv/text_classification/all/train.csv")
-    test_df.to_csv(f"{current_path}/../csv/text_classification/all/test.csv")
+
+    review_data_dir, review_data_file = os.path.split(review_data_path)
+
+    train_file_name = "train_" + review_data_file
+    train_df.to_csv(os.path.join(review_data_dir, train_file_name))
+
+    test_file_name = "test_" + review_data_file
+    test_df.to_csv(os.path.join(review_data_dir, test_file_name))
