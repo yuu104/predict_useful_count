@@ -58,34 +58,37 @@ def get_classification_report(y_pred: list, y_true: list) -> DataFrame:
     return report_df
 
 
-def evaluation(category_name: str, pre_train_model_name: str):
+def evaluation(category_name: str, pre_train_model_name: str, test_data_path: str):
     """
     モデルの評価を行い、結果を出力する
+
+    Parameters
+    ----------
+    category_name: str
+        カテゴリ名
+    pre_train_model_name: str
+        事前学習済みモデル
+    test_data_path: str
+        テストデータCSVファイルのパス
     """
 
-    review_df = pd.read_csv(
-        f"{current_path}/../csv/text_classification/{category_name}/review.csv"
-    )
-    _, test_df = get_train_test_split(df=review_df)
-    test_df = under_sampling(
-        df=test_df,
-        strategy={"0": 100, "1~2": 100, "3~4": 100, "5~6": 100, "7~9": 78, "10~": 100},
-    )
+    test_df = pd.read_csv(test_data_path, index_col=0)
 
     y_true = []
     y_pred = []
-    labels = ["0", "1~2", "3~4", "5~6", "7~9", "10~"]
+    labels = ["0", "1~2", "3~"]
 
     classifier = pipeline(
         "sentiment-analysis",
-        model=f"{current_path}/models/{category_name}/{pre_train_model_name}/under_sampling",
+        model=f"{current_path}/models/{category_name}/{pre_train_model_name}",
     )
+    id2label = {0: "0", 1: "1~2", 2: "3~"}
     for item in zip(test_df["label"], test_df["text"]):
         label = item[0]
         text = item[1]
         try:
             prediction = classifier(text)
-            y_true.append(str(label))
+            y_true.append(id2label[label])
             y_pred.append(str(prediction[0]["label"]))
         except:
             continue
@@ -95,25 +98,32 @@ def evaluation(category_name: str, pre_train_model_name: str):
     plot_confusion_matrix(y_pred=y_pred, y_true=y_true, labels=labels)
 
 
-def training(category_name: str, pre_train_model_name: str):
+def training(
+    category_name: str,
+    pre_train_model_name: str,
+    train_data_path: str,
+    test_data_path: str,
+):
     """
     役立ち数の推論モデルを構築する
     - 事前学習済みモデルを使用してレビュー文をベクトル化・ファインチューニング
     - 学習したモデルを保存する
+
+    Parameters
+    ----------
+    category_name: str
+        カテゴリ名
+    pre_train_model_name: str
+        事前学習済みモデル
+    train_data_path: str
+        学習データCSVファイルのパス
+    test_data_path: str
+        テストデータCSVファイルのパス
     """
 
     # 　データセットの用意
-    review_df = pd.read_csv(
-        f"{current_path}/../csv/text_classification/{category_name}/encoded_review.csv"
-    )
-    train_df, test_df = get_train_test_split(review_df=review_df)
-    train_df = under_sampling(
-        df=train_df, strategy={0: 500, 1: 500, 2: 500, 3: 468, 4: 313, 5: 500}
-    )
-    test_df = under_sampling(
-        df=test_df,
-        strategy={0: 100, 1: 100, 2: 100, 3: 100, 4: 78, 5: 100},
-    )
+    train_df = pd.read_csv(train_data_path, index_col=0)
+    test_df = pd.read_csv(test_data_path, index_col=0)
     train_dataset = Dataset.from_pandas(train_df)
     test_dataset = Dataset.from_pandas(test_df)
     dataset = DatasetDict({"train": train_dataset, "test": test_dataset})
@@ -123,9 +133,9 @@ def training(category_name: str, pre_train_model_name: str):
 
     # 事前学習済みモデルの取得
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-    num_labels = 6
-    id2label = {0: "0", 1: "1~2", 2: "3~4", 3: "5~6", 4: "7~9", 5: "10~"}
-    label2id = {"0": 0, "1~2": 1, "3~4": 2, "5~6": 3, "7~9": 4, "10~": 5}
+    num_labels = 3
+    id2label = {0: "0", 1: "1~2", 2: "3~"}
+    label2id = {"0": 0, "1~2": 1, "3~": 2}
     model = AutoModelForSequenceClassification.from_pretrained(
         pre_train_model_name,
         num_labels=num_labels,
@@ -145,7 +155,7 @@ def training(category_name: str, pre_train_model_name: str):
     # 学習の準備
     batch_size = 8
     logging_steps = len(dataset_encoded["train"])  # batch_size
-    output_dir = f"{current_path}/model_outputs/{category_name}/{pre_train_model_name}/under_sampling"
+    output_dir = f"{current_path}/model_outputs/{category_name}/{pre_train_model_name}"
     training_args = TrainingArguments(
         output_dir=output_dir,
         num_train_epochs=2,
@@ -172,17 +182,30 @@ def training(category_name: str, pre_train_model_name: str):
     trainer.train()
 
     # モデルの保存
-    trainer.save_model(
-        f"{current_path}/models/{category_name}/{pre_train_model_name}/under_sampling"
-    )
+    trainer.save_model(f"{current_path}/models/{category_name}/{pre_train_model_name}")
 
 
 def main():
     pre_train_model_name = "papluca/xlm-roberta-base-language-detection"
-    category_name = "chocolate"
+    category_name = "all"
+    train_data_path = (
+        f"{current_path}/../csv/text_classification/{category_name}/train_3_class.csv"
+    )
+    test_data_path = (
+        f"{current_path}/../csv/text_classification/{category_name}/test_3_class.csv"
+    )
 
-    training(category_name=category_name, pre_train_model_name=pre_train_model_name)
-    evaluation(category_name=category_name, pre_train_model_name=pre_train_model_name)
+    # training(
+    #     category_name=category_name,
+    #     pre_train_model_name=pre_train_model_name,
+    #     train_data_path=train_data_path,
+    #     test_data_path=test_data_path,
+    # )
+    evaluation(
+        category_name=category_name,
+        pre_train_model_name=pre_train_model_name,
+        test_data_path=test_data_path,
+    )
 
 
 if __name__ == "__main__":
